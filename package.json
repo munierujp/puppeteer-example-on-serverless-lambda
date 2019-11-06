@@ -11,7 +11,8 @@
     "deploy-all": "serverless deploy -v",
     "invoke": "serverless invoke -f",
     "local": "serverless invoke local -f",
-    "info": "serverless info"
+    "info": "serverless info",
+    "lint": "eslint --ext .js --ignore-path .gitignore ."
   },
   "keywords": [],
   "author": "",
