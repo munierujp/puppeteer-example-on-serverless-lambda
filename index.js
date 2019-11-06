@@ -9,12 +9,12 @@ exports.handler = async (event, context, callback) => {
     height = process.env.DEFAULT_HEIGHT
   } = event.queryStringParameters || {}
 
-  let slsChrome = null
+  let chrome = null
   let browser = null
   let page = null
 
   try {
-    slsChrome = await launchChrome({
+    chrome = await launchChrome({
       flags: [
         '--headless',
         '--disable-gpu',
@@ -79,8 +79,8 @@ exports.handler = async (event, context, callback) => {
       await browser.disconnect()
     }
 
-    if (slsChrome) {
-      await slsChrome.kill()
+    if (chrome) {
+      await chrome.kill()
     }
   }
 }
