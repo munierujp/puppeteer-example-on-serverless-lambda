@@ -16,7 +16,7 @@ functions:
     handler: index.handler
     events:
       - http:
-          path: "{path+}"
+          path: ""
           method: get
 
 resources:
