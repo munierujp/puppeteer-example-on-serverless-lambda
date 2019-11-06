@@ -1,12 +1,10 @@
-service: puppeteer  
+service: puppeteer
 
 provider:
   name: aws
   runtime: nodejs8.10
   region: ap-northeast-1
   stage: test
-  environment:
-    HOST: https://poiit.me
 
 
 

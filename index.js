@@ -1,16 +1,13 @@
 const launchChrome = require('@serverless-chrome/lambda')
 const CDP = require('chrome-remote-interface')
 const puppeteer = require('puppeteer')
-const path = require('path')
 
 exports.handler = async (event, context, callback) => {
   const {
+    url = 'https://example.com/',
     w = 1200,
     h = 630
   } = event.queryStringParameters || {}
-
-  const eventPath = event.path.replace(/^\//, '')
-  const url = path.join(process.env.HOST, eventPath.replace('.jpeg', ''))
 
   let slsChrome = null
   let browser = null
