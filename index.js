@@ -44,7 +44,7 @@ exports.handler = async (event, context, callback) => {
     await page.goto(url)
 
     await page.evaluate(() => {
-      var style = document.createElement('style')
+      const style = document.createElement('style')
       style.textContent = `
                 @import url('//fonts.googleapis.com/css?family=M+PLUS+Rounded+1c|Roboto:300,400,500,700|Material+Icons');
                 div, input, a, p{ font-family: "M PLUS Rounded 1c", sans-serif; };`
