@@ -9,9 +9,9 @@ exports.handler = async (event, context, callback) => {
     height = process.env.DEFAULT_HEIGHT
   } = event.queryStringParameters || {}
 
-  let chrome = null
-  let browser = null
-  let page = null
+  let chrome
+  let browser
+  let page
 
   try {
     chrome = await launchChrome({
