@@ -4,17 +4,17 @@ const puppeteer = require('puppeteer')
 
 exports.handler = async (event, context, callback) => {
   const {
-    url = 'https://example.com/',
-    w = 1200,
-    h = 630
+    url = process.env.DEFAULT_URL,
+    width = process.env.DEFAULT_WIDTH,
+    height = process.env.DEFAULT_HEIGHT
   } = event.queryStringParameters || {}
 
-  let slsChrome = null
-  let browser = null
-  let page = null
+  let chrome
+  let browser
+  let page
 
   try {
-    slsChrome = await launchChrome({
+    chrome = await launchChrome({
       flags: [
         '--headless',
         '--disable-gpu',
@@ -35,8 +35,8 @@ exports.handler = async (event, context, callback) => {
     page = await browser.newPage()
 
     page.setViewport({
-      width: Number(w),
-      height: Number(h)
+      width: Number(width),
+      height: Number(height)
     })
 
     await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36')
@@ -44,7 +44,7 @@ exports.handler = async (event, context, callback) => {
     await page.goto(url)
 
     await page.evaluate(() => {
-      var style = document.createElement('style')
+      const style = document.createElement('style')
       style.textContent = `
                 @import url('//fonts.googleapis.com/css?family=M+PLUS+Rounded+1c|Roboto:300,400,500,700|Material+Icons');
                 div, input, a, p{ font-family: "M PLUS Rounded 1c", sans-serif; };`
@@ -79,8 +79,8 @@ exports.handler = async (event, context, callback) => {
       await browser.disconnect()
     }
 
-    if (slsChrome) {
-      await slsChrome.kill()
+    if (chrome) {
+      await chrome.kill()
     }
   }
 }
