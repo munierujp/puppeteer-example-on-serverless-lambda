@@ -57,17 +57,13 @@ exports.handler = async (event, context, callback) => {
 
     await page.waitFor(2000)
 
-    const screenshotBuffer = await page.screenshot({
-      type: 'jpeg',
-      quality: 100,
-      encoding: 'binary'
-    })
+    const screenshotBuffer = await page.screenshot()
 
     return callback(null, {
       statusCode: 200,
       isBase64Encoded: true,
       headers: {
-        'Content-Type': 'image/jpeg'
+        'Content-Type': 'image/png'
       },
       body: screenshotBuffer.toString('base64')
     })
