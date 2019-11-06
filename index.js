@@ -1,95 +1,93 @@
-const launchChrome = require('@serverless-chrome/lambda');
-const CDP = require('chrome-remote-interface');
-const puppeteer = require('puppeteer');
-const path = require('path');
+const launchChrome = require('@serverless-chrome/lambda')
+const CDP = require('chrome-remote-interface')
+const puppeteer = require('puppeteer')
+const path = require('path')
 
 exports.handler = async (event, context, callback) => {
-    
-    const {
-        w = 1200,
-        h = 630,
-        mobile = false
-      } = event.queryStringParameters || {}
+  const {
+    w = 1200,
+    h = 630
+  } = event.queryStringParameters || {}
 
-    const eventPath = event.path.replace(/^\//, "")
-    const url = path.join(process.env.HOST, eventPath.replace('.jpeg', ''))
+  const eventPath = event.path.replace(/^\//, '')
+  const url = path.join(process.env.HOST, eventPath.replace('.jpeg', ''))
 
-    let slsChrome = null;   
-    let browser = null;
-    let page = null;
+  let slsChrome = null
+  let browser = null
+  let page = null
 
-    try {
-        slsChrome = await launchChrome({
-            flags: [
-                '--headless',
-                '--disable-gpu',
-                '--no-sandbox',
-                '--window-size=1048,743',
-                '--hide-scrollbars',
-                '--enable-logging',
-                '--ignore-certificate-errors',
-                '--disable-setuid-sandbox',
-            ]
-        });
-        
-        browser = await puppeteer.connect({ 
-            ignoreHTTPSErrors: true,
-            browserWSEndpoint: (await CDP.Version()).webSocketDebuggerUrl 
-        });
+  try {
+    slsChrome = await launchChrome({
+      flags: [
+        '--headless',
+        '--disable-gpu',
+        '--no-sandbox',
+        '--window-size=1048,743',
+        '--hide-scrollbars',
+        '--enable-logging',
+        '--ignore-certificate-errors',
+        '--disable-setuid-sandbox'
+      ]
+    })
 
-        page = await browser.newPage();
+    browser = await puppeteer.connect({
+      ignoreHTTPSErrors: true,
+      browserWSEndpoint: (await CDP.Version()).webSocketDebuggerUrl
+    })
 
-        page.setViewport({
-            width: Number(w),
-            height: Number(h)
-        })
-        
-        await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36')
+    page = await browser.newPage()
 
-        await page.goto(url)
-        
-        await page.evaluate(() => {
-            var style = document.createElement('style')
-            style.textContent = `
+    page.setViewport({
+      width: Number(w),
+      height: Number(h)
+    })
+
+    await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36')
+
+    await page.goto(url)
+
+    await page.evaluate(() => {
+      var style = document.createElement('style')
+      style.textContent = `
                 @import url('//fonts.googleapis.com/css?family=M+PLUS+Rounded+1c|Roboto:300,400,500,700|Material+Icons');
                 div, input, a, p{ font-family: "M PLUS Rounded 1c", sans-serif; };`
-            document.head.appendChild(style);
-            document.body.style.fontFamily = "'M PLUS Rounded 1c', sans-serif";     
-        })
-        
-        await page.waitFor(2000);
+      document.head.appendChild(style)
+      document.body.style.fontFamily = "'M PLUS Rounded 1c', sans-serif"
+    })
 
-        const screenshotBuffer = await page.screenshot({
-            type: 'jpeg',
-            quality: 100,
-            encoding: 'binary'
-        });
+    await page.waitFor(2000)
 
-        return callback(null, {
-            statusCode: 200, 
-            isBase64Encoded: true,
-            headers: {
-                "Content-Type": "image/jpeg",
-            },
-            body: screenshotBuffer.toString('base64')
-        })
-    } catch (err) {
-        console.error(err);
-        return callback(null, {
-            statusCode: 500, 
-            body: err
-        });
-    } finally {        
-        if (page) {
-            await page.close();
-        }
+    const screenshotBuffer = await page.screenshot({
+      type: 'jpeg',
+      quality: 100,
+      encoding: 'binary'
+    })
 
-        if (browser) {
-            await browser.disconnect();
-        }
-
-        if (slsChrome) { 
-            await slsChrome.kill();
-        }
+    return callback(null, {
+      statusCode: 200,
+      isBase64Encoded: true,
+      headers: {
+        'Content-Type': 'image/jpeg'
+      },
+      body: screenshotBuffer.toString('base64')
+    })
+  } catch (err) {
+    console.error(err)
+    return callback(null, {
+      statusCode: 500,
+      body: err
+    })
+  } finally {
+    if (page) {
+      await page.close()
     }
-};
+
+    if (browser) {
+      await browser.disconnect()
+    }
+
+    if (slsChrome) {
+      await slsChrome.kill()
+    }
+  }
+}
