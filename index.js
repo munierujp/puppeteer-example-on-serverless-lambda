@@ -4,9 +4,9 @@ const puppeteer = require('puppeteer')
 
 exports.handler = async (event, context, callback) => {
   const {
-    url = 'https://example.com/',
-    w = 1200,
-    h = 630
+    url = process.env.DEFAULT_URL,
+    width = process.env.DEFAULT_WIDTH,
+    height = process.env.DEFAULT_HEIGHT
   } = event.queryStringParameters || {}
 
   let slsChrome = null
@@ -35,8 +35,8 @@ exports.handler = async (event, context, callback) => {
     page = await browser.newPage()
 
     page.setViewport({
-      width: Number(w),
-      height: Number(h)
+      width: Number(width),
+      height: Number(height)
     })
 
     await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36')
