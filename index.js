@@ -70,7 +70,7 @@ exports.handler = async (event, context, callback) => {
     const resp = createErrorResponse({
       statusCode: 500,
       type: 'https://github.com/munierujp/ogp-api/blob/master/index.js',
-      title: 'Failed to capture screenshot.'
+      title: 'Failed to capture screenshot'
     })
     return callback(null, resp)
   } finally {
