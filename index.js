@@ -9,6 +9,15 @@ exports.handler = async (event, context, callback) => {
     height = process.env.DEFAULT_HEIGHT
   } = event.queryStringParameters || {}
 
+  if (!url.match(process.env.ALLOW_URL_PATTERN)) {
+    const message = `${url} does not match to ${process.env.ALLOW_URL_PATTERN}`
+    console.error(message)
+    return callback(null, {
+      statusCode: 400,
+      body: message
+    })
+  }
+
   let chrome
   let browser
   let page
