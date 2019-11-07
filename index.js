@@ -39,7 +39,7 @@ exports.handler = async (event, context, callback) => {
       height: Number(height)
     })
 
-    await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36')
+    await page.setUserAgent(process.env.USER_AGENT)
 
     await page.goto(url)
 
